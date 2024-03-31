@@ -179,27 +179,6 @@ class RegistrationSystem: #defining a class called the registarion system
         sorted_records = sorted(self.patient_records.values(), key=lambda x: x.admission_date) #Using sorted method and extracting the values from patient records from the dictionary and using a lambda function as the key parameter to specify that sorting should be based on the admission date of each patient record
         return sorted_records #returning the sorted records
 
-    def discharge_patient(self, identifier): #defining a function that discharges patients
-        identifier = input("Enter patient's identifier: ")  #This line defines identifier which asks user to input
-        identifier = int(identifier)  # Convert to integer
-        del self.patient_records[identifier] #uses del to remove from patient records
-        print(f"Patient with ID {identifier} discharged successfully.") #prints a verifiction of removal
-        self.print_job_queue.remove(identifier) #uses remove method to remove from print job queue
-        print("Patient removed from print job queue") #prints a verifiction of removal
-        # Remove from consultation queue
-        current = self.consultation_queue_head  # Set the current node to the head of the consultation queue
-        prev = None  # Initialize a variable to track the previous node
-        while current:  # Iterate through the consultation queue until the end is reached
-            if current.data == identifier:  # Check if the current node's data matches the provided identifier
-                if prev:  # If the node is not the head
-                    prev.next = current.next  # Adjust the previous node's next pointer
-                else:  # If the node is the head
-                    self.consultation_queue_head = current.next  # Update the head pointer
-                print("Patient removed from consultation queue")  # Print a message indicating successful removal
-                break  # Exit the loop after removing the patient
-            prev = current  # Move to the next node in the consultation queue
-            current = current.next
-
     def undo_registration(self): #defining a function for undoing registration
         if self.undo_stack: #if we are undoing the stack
             action, identifier = self.undo_stack.pop() #it pops the last action
@@ -241,7 +220,28 @@ class RegistrationSystem: #defining a class called the registarion system
             print("Patient information updated successfully") #if it's successfull then it'll print this message successfully
         else:
             print("Patient not found") #otherwise it'll print that patient is not found
-
+   
+    def discharge_patient(self, identifier): #defining a function that discharges patients
+        identifier = input("Enter patient's identifier: ")  #This line defines identifier which asks user to input
+        identifier = int(identifier)  # Convert to integer
+        del self.patient_records[identifier] #uses del to remove from patient records
+        print(f"Patient with ID {identifier} discharged successfully.") #prints a verifiction of removal
+        self.print_job_queue.remove(identifier) #uses remove method to remove from print job queue
+        print("Patient removed from print job queue") #prints a verifiction of removal
+        # Remove from consultation queue
+        current = self.consultation_queue_head  # Set the current node to the head of the consultation queue
+        prev = None  # Initialize a variable to track the previous node
+        while current:  # Iterate through the consultation queue until the end is reached
+            if current.data == identifier:  # Check if the current node's data matches the provided identifier
+                if prev:  # If the node is not the head
+                    prev.next = current.next  # Adjust the previous node's next pointer
+                else:  # If the node is the head
+                    self.consultation_queue_head = current.next  # Update the head pointer
+                print("Patient removed from consultation queue")  # Print a message indicating successful removal
+                break  # Exit the loop after removing the patient
+            prev = current  # Move to the next node in the consultation queue
+            current = current.next
+            
     def process_print_jobs(self):#This function prints the registered patients
         while self.print_job_queue: #This line uses a while loop that iterates over the print job queue
             identifier = self.print_job_queue.popleft() #This line deques the  leftmost item from the print jobs deque
